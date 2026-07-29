@@ -24,7 +24,7 @@ export default function Home() {
   useEffect(() => {
     async function loadTodos() {
       try {
-        const response = await axios.get<Todo[]>('/api/task');
+        const response = await axios.get<Todo[]>('/api/tasks');
         if (response.status === 200) {
           setTodos(response.data);
         }
@@ -40,7 +40,7 @@ export default function Home() {
   // 2. CREATE NEW TASK (Axios POST Request)
   const addTodo = async (text: string, priority: 'High' | 'Medium' | 'Low') => {
     try {
-      const response = await axios.post<Todo>('/api/task', { text, priority });
+      const response = await axios.post<Todo>('/api/tasks', { text, priority });
       if (response.status === 201 || response.status === 200) {
         setTodos((prevTodos) => [response.data, ...prevTodos]);
       }
@@ -55,7 +55,7 @@ export default function Home() {
     if (!targetTodo) return;
 
     try {
-      const response = await axios.put(`/api/task`, {
+      const response = await axios.put(`/api/tasks`, {
         id,
         completed: !targetTodo.completed
       });
@@ -68,7 +68,7 @@ export default function Home() {
         );
       }
     } catch (err: any) {
-      console.error("Fulfillment transaction interrupted during state patch:", err.response?.data?.error || err.message);
+      console.error("Fulfillment transaction interrupted during state patch:");
     }
   };
 
@@ -76,19 +76,19 @@ export default function Home() {
   const deleteTodo = async (id: string) => {
     try {
       
-      const response = await axios.delete(`/api/task?id=${id}`);
+      const response = await axios.delete(`/api/tasks?id=${id}`);
       if (response.status === 200) {
         setTodos(prevTodos => prevTodos.filter(todo => (todo.id || todo._id) !== id));
       }
     } catch (err: any) {
-      console.error("Pipeline breakdown tracking state execution deletions:", err.response?.data?.error || err.message);
+      console.log("Pipeline breakdown tracking state execution deletions:");
     }
   };
 
   
   const editTodo = async (id: string, newText: string, newPriority: 'High' | 'Medium' | 'Low') => {
     try {
-      const response = await axios.put(`/api/task`, {
+      const response = await axios.put(`/api/tasks`, {
         id,
         text: newText,
         priority: newPriority
